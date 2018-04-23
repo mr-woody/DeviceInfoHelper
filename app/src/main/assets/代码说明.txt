@@ -1,0 +1,13 @@
+入口为：KeplerSdk类的initSdk方法。remoteId为H5生成的ID，在之后上传信息的时候带上
+DeviceUtil为获取设备信息的入口
+gson:gson源码，用不到可忽略
+okhttp/okio:okhttp的源码，用不到可忽略
+location:获取GPS，基站信息的工具类
+
+移植必要的类和包：
+location包
+model包
+DeviceUtils类
+KeplerSdk类
+
+
