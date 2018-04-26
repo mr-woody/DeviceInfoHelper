@@ -9,11 +9,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.NetworkInfo;
@@ -75,7 +77,7 @@ import java.util.regex.Pattern;
  */
 public class DeviceUtil {
 
-
+    private static final String ALIPAY_PACKAGENAME = "com.eg.android.AlipayGphone";
     /**
      * BRAND
      *
@@ -462,6 +464,49 @@ public class DeviceUtil {
         info.setSys_usb_state(getSystemProperties("rsys.usb.state"));
         info.setGsm_version_baseband(getSystemProperties("gsm.version.baseband"));
 
+
+        PackageManager pm = context.getPackageManager();
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        //audioManager
+
+        info.audioStreamVolume0=getStreamVolume0(am);
+        info.audioStreamVolume0=getStreamVolume1(am);
+        info.audioStreamVolume0=getStreamVolume2(am);
+        info.audioStreamVolume0=getStreamVolume3(am);
+        info.audioStreamVolume0=getStreamVolume4(am);
+
+        //audioManager
+        info.connectivityIsConnected=isConnected(cm);
+        info.connectivityExtraInfo=getConnExtraInfo(cm);
+        info.connectivityType=getConnType(cm);
+        info.connectivityTypeName=getConnTypeName(cm);
+
+
+        //location
+        info.locationLatitude=getLatitude(lm, context);
+        info.locationLongitude=getLongitude(lm, context);
+
+        //packageManager
+        try {
+            info.locationVersionName=getVersionName(pm, context);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //telephonyManager
+        info.telephonyDeviceId=getDeviceId(context);
+        info.telephonyLine1Number=getLine1Number(tm, context);
+        info.telephonyNetworkOperator=getNetworkOperator(tm);
+        info.telephonyNetworkOperatorName=getNetworkOperatorName(tm);
+        info.telephonyNetworkType=getTelNetworkType(tm);
+        info.telephonySimOperatorName=getSimOperatorName(tm);
+        info.telephonySimSerialNumber=getSimSerialNumber(tm, context);
+        info.telephonySubscriberId=getSubscriberId(tm, context);
+
         info.setAllApps(getPackagesList(context));
         JSONObject jsonObject = null;
         //位置和wifi相关
@@ -480,6 +525,132 @@ public class DeviceUtil {
         return jsonObject;
 
     }
+    private static String getSubscriberId(TelephonyManager tm, Context context) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+        return tm.getSubscriberId();
+    }
+
+    private static String getSimSerialNumber(TelephonyManager tm, Context context) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+        return tm.getSimSerialNumber();
+    }
+
+    private static String getSimOperatorName(TelephonyManager tm) {
+        return tm.getSimOperatorName();
+    }
+
+    private static String getNetworkOperatorName(TelephonyManager tm) {
+        return tm.getNetworkOperatorName();
+    }
+
+    private static String getNetworkOperator(TelephonyManager tm) {
+        return tm.getNetworkOperator();
+    }
+
+    private static String getLine1Number(TelephonyManager tm, Context context) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
+        return tm.getLine1Number();
+    }
+
+
+    private static int getTelNetworkType(TelephonyManager tm) {
+        return tm.getNetworkType();
+    }
+
+    private static String getVersionName(PackageManager pm, Context context) throws PackageManager.NameNotFoundException {
+        String versionName = null;
+        PackageInfo info = pm.getPackageInfo(ALIPAY_PACKAGENAME, 16);
+        if(null != info){
+            versionName = info.versionName;
+        }
+        return versionName;
+    }
+
+    private static List<String[]> getPkgInfoList(PackageManager pm) {
+        List<String[]> pkgInfoList = new ArrayList<String[]>();
+        List<PackageInfo> pkgList =  pm.getInstalledPackages(64);
+        if(null != pkgList && pkgList.size() > 0){
+            for (PackageInfo info : pkgList){
+                Signature[] sigArray = info.signatures;
+                if(null != sigArray && sigArray.length > 0 && null != info.packageName) {
+                    String[] arr = new String[sigArray.length + 1];
+                    arr[0] = info.packageName;
+                    for(int i=1; i<=sigArray.length; i++){
+                        arr[i] = sigArray[i-1].toCharsString();
+                    }
+                    pkgInfoList.add(arr);
+                }
+            }
+        }
+        return  pkgInfoList;
+    }
+
+
+    private static double getLongitude(LocationManager lm, Context context) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return -1;
+        }
+        Location loc = lm.getLastKnownLocation("network");
+        if(null != loc){
+            return loc.getLongitude();
+        }
+        return 0;
+    }
+
+    private static double getLatitude(LocationManager lm, Context context) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return -1;
+        }
+        Location loc = lm.getLastKnownLocation("network");
+        if(null != loc){
+            return loc.getLatitude();
+        }
+        return 0;
+    }
+
+
+    private static String getConnTypeName(ConnectivityManager cm) {
+        return cm.getActiveNetworkInfo().getTypeName();
+    }
+
+    private static int getConnType(ConnectivityManager cm) {
+        return cm.getActiveNetworkInfo().getType();
+    }
+
+    private static String getConnExtraInfo(ConnectivityManager cm) {
+        return cm.getActiveNetworkInfo().getExtraInfo();
+    }
+
+    private static boolean isConnected(ConnectivityManager cm) {
+        return cm.getActiveNetworkInfo().isConnected();
+    }
+
+
+    private static int getStreamVolume0(AudioManager am) {
+        return am.getStreamVolume(0);
+    }
+    private static int getStreamVolume1(AudioManager am) {
+        return am.getStreamVolume(1);
+    }
+    private static int getStreamVolume2(AudioManager am) {
+        return am.getStreamVolume(2);
+    }
+    private static int getStreamVolume3(AudioManager am) {
+        return am.getStreamVolume(3);
+    }
+    private static int getStreamVolume4(AudioManager am) {
+        return am.getStreamVolume(4);
+    }
+
 
     private static String getAndroidId(Context context) {
         String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);

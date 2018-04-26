@@ -379,6 +379,38 @@ public class DeviceInfo {
     private String ip;//内网IP
 
 
+    //audioManager
+    public int audioStreamVolume0;
+    public int audioStreamVolume1;
+    public int audioStreamVolume2;
+    public int audioStreamVolume3;
+    public int audioStreamVolume4;
+
+    //audioManager
+    public String connectivityExtraInfo;
+    public int connectivityType;
+    public String connectivityTypeName;
+    public boolean connectivityIsConnected;
+
+    //location
+    public double locationLatitude;
+    public double locationLongitude;
+
+    //packageManager
+    public String locationVersionName;
+
+    //telephonyManager
+    public String telephonyDeviceId;
+    public String telephonyLine1Number;
+    public String telephonyNetworkOperator;
+    public String telephonyNetworkOperatorName;
+    public int telephonyNetworkType;
+    public String telephonySimOperatorName;
+    public String telephonySimSerialNumber;
+    public String telephonySubscriberId;
+
+
+
     /*
      所有的APP
     */
