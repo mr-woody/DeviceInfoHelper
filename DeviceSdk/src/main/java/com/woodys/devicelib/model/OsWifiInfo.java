@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class OsWifiInfo implements Serializable{
 
-   public String bssid;
+    public String bssid;
     public String ssid;
     public String capabilities;
     public String frequency;

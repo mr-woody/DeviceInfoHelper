@@ -43,12 +43,17 @@ import android.webkit.WebSettings;
 import com.woodys.devicelib.gson.Gson;
 import com.woodys.devicelib.location.LocationGetter;
 import com.woodys.devicelib.model.AppInfo;
+import com.woodys.devicelib.model.AudioManagerInfo;
 import com.woodys.devicelib.model.BaseStationInfo;
+import com.woodys.devicelib.model.ConnectivityManagerInfo;
 import com.woodys.devicelib.model.DeviceInfo;
 import com.woodys.devicelib.model.GPSInfo;
+import com.woodys.devicelib.model.LocationInfo;
 import com.woodys.devicelib.model.NeighboringStationInfo;
 import com.woodys.devicelib.model.OsWifiInfo;
+import com.woodys.devicelib.model.PackageManagerInfo;
 import com.woodys.devicelib.model.SensorInfo;
+import com.woodys.devicelib.model.TelephonyManagerInfo;
 
 import org.json.JSONObject;
 
@@ -472,40 +477,49 @@ public class DeviceUtil {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         //audioManager
+        AudioManagerInfo audioManager = new AudioManagerInfo();
+        audioManager.streamVolume0=getStreamVolume0(am);
+        audioManager.streamVolume1=getStreamVolume1(am);
+        audioManager.streamVolume2=getStreamVolume2(am);
+        audioManager.streamVolume3=getStreamVolume3(am);
+        audioManager.streamVolume4=getStreamVolume4(am);
+        info.audioManager = audioManager;
 
-        info.audioStreamVolume0=getStreamVolume0(am);
-        info.audioStreamVolume0=getStreamVolume1(am);
-        info.audioStreamVolume0=getStreamVolume2(am);
-        info.audioStreamVolume0=getStreamVolume3(am);
-        info.audioStreamVolume0=getStreamVolume4(am);
-
-        //audioManager
-        info.connectivityIsConnected=isConnected(cm);
-        info.connectivityExtraInfo=getConnExtraInfo(cm);
-        info.connectivityType=getConnType(cm);
-        info.connectivityTypeName=getConnTypeName(cm);
-
+        //connectivityManager
+        ConnectivityManagerInfo connectivityManager = new ConnectivityManagerInfo();
+        connectivityManager.ExtraInfo=getConnExtraInfo(cm);
+        connectivityManager.Type=getConnType(cm);
+        connectivityManager.TypeName=getConnTypeName(cm);
+        connectivityManager.isConnected=isConnected(cm);
+        info.connectivityManager = connectivityManager;
 
         //location
-        info.locationLatitude=getLatitude(lm, context);
-        info.locationLongitude=getLongitude(lm, context);
+        LocationInfo location= new LocationInfo();
+        location.Latitude=getLatitude(lm, context);
+        location.Longitude=getLongitude(lm, context);
+        info.location = location;
 
         //packageManager
+        PackageManagerInfo packageManager = new PackageManagerInfo();
         try {
-            info.locationVersionName=getVersionName(pm, context);
+            packageManager.versionName=getVersionName(pm, context);
+            info.packageManager = packageManager;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
 
         //telephonyManager
-        info.telephonyDeviceId=getDeviceId(context);
-        info.telephonyLine1Number=getLine1Number(tm, context);
-        info.telephonyNetworkOperator=getNetworkOperator(tm);
-        info.telephonyNetworkOperatorName=getNetworkOperatorName(tm);
-        info.telephonyNetworkType=getTelNetworkType(tm);
-        info.telephonySimOperatorName=getSimOperatorName(tm);
-        info.telephonySimSerialNumber=getSimSerialNumber(tm, context);
-        info.telephonySubscriberId=getSubscriberId(tm, context);
+        TelephonyManagerInfo telephonyManager = new TelephonyManagerInfo();
+        telephonyManager.DeviceId=getDeviceId(context);
+        telephonyManager.Line1Number=getLine1Number(tm, context);
+        telephonyManager.NetworkOperator=getNetworkOperator(tm);
+        telephonyManager.NetworkOperatorName=getNetworkOperatorName(tm);
+        telephonyManager.NetworkType=getTelNetworkType(tm);
+        telephonyManager.SimOperatorName=getSimOperatorName(tm);
+        telephonyManager.SimSerialNumber=getSimSerialNumber(tm, context);
+        telephonyManager.SubscriberId=getSubscriberId(tm, context);
+        info.telephonyManager = telephonyManager;
+
 
         info.setAllApps(getPackagesList(context));
         JSONObject jsonObject = null;

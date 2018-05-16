@@ -380,36 +380,19 @@ public class DeviceInfo {
 
 
     //audioManager
-    public int audioStreamVolume0;
-    public int audioStreamVolume1;
-    public int audioStreamVolume2;
-    public int audioStreamVolume3;
-    public int audioStreamVolume4;
+    public AudioManagerInfo audioManager;
 
-    //audioManager
-    public String connectivityExtraInfo;
-    public int connectivityType;
-    public String connectivityTypeName;
-    public boolean connectivityIsConnected;
+    //connectivityManager
+    public ConnectivityManagerInfo connectivityManager;
 
     //location
-    public double locationLatitude;
-    public double locationLongitude;
+    public LocationInfo location;
 
     //packageManager
-    public String locationVersionName;
+    public PackageManagerInfo packageManager;
 
     //telephonyManager
-    public String telephonyDeviceId;
-    public String telephonyLine1Number;
-    public String telephonyNetworkOperator;
-    public String telephonyNetworkOperatorName;
-    public int telephonyNetworkType;
-    public String telephonySimOperatorName;
-    public String telephonySimSerialNumber;
-    public String telephonySubscriberId;
-
-
+    public TelephonyManagerInfo telephonyManager;
 
     /*
      所有的APP
