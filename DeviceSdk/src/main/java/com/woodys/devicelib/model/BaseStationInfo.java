@@ -1,9 +1,11 @@
 package com.woodys.devicelib.model;
 
+import java.io.Serializable;
+
 /**
  * Created by Zhao_xl on 17/5/26.
  */
-public class BaseStationInfo {
+public class BaseStationInfo implements Serializable {
 
     public String mcc;
     public String mnc;

@@ -1,11 +1,12 @@
 package com.woodys.devicelib.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by renrenxin on 16/12/10.
  */
-public class DeviceInfo {
+public class DeviceInfo implements Serializable {
     /*
        手机品牌
      */
