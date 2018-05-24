@@ -19,3 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+#获取用户设备基本信息
+-keep class com.woodys.devicelib.model.** { *; }
