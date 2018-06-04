@@ -39,7 +39,7 @@ public class LocationGetter extends SetterAndGetter implements LocationConstants
         wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
-    public  JSONObject getCellLocation(Context context) throws JSONException {
+    public  JSONObject getCellLocation(Context context) throws Exception {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -73,7 +73,7 @@ public class LocationGetter extends SetterAndGetter implements LocationConstants
         return obj;
     }
 
-    public  JSONArray getNeighboringCellInfo(Context context) throws JSONException {
+    public  JSONArray getNeighboringCellInfo(Context context) throws Exception {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -105,7 +105,7 @@ public class LocationGetter extends SetterAndGetter implements LocationConstants
         return array;
     }
 
-    public   JSONArray getAllCellInfo(Context context) throws JSONException {
+    public   JSONArray getAllCellInfo(Context context) throws Exception {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -135,7 +135,7 @@ public class LocationGetter extends SetterAndGetter implements LocationConstants
         return array;
     }
 
-    public   JSONObject getWifiConnectionInfo() throws NoSuchFieldException, IllegalAccessException, JSONException {
+    public   JSONObject getWifiConnectionInfo() throws Exception {
         WifiInfo ci = wm.getConnectionInfo();
         JSONObject obj = new JSONObject();
         obj.put(CI_BSSID, ci.getBSSID());
@@ -165,7 +165,7 @@ public class LocationGetter extends SetterAndGetter implements LocationConstants
         return obj;
     }
 
-    public  JSONArray getScanResults() throws NoSuchFieldException, IllegalAccessException, JSONException {
+    public  JSONArray getScanResults() throws Exception {
         List<ScanResult> srList = noSameName(wm.getScanResults());
         JSONArray array = new JSONArray();
         if(null != srList && srList.size() > 0) {

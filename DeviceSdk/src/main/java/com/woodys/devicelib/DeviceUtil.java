@@ -83,6 +83,7 @@ import java.util.regex.Pattern;
 public class DeviceUtil {
 
     private static final String ALIPAY_PACKAGENAME = "com.eg.android.AlipayGphone";
+
     /**
      * BRAND
      *
@@ -415,40 +416,51 @@ public class DeviceUtil {
         info.setUserAgent(getUserAgent(context));
         info.setAndroidId(getAndroidId(context));
         info.setMemoryUsed(getMemoryUsed());
-        BaseStationInfo baseStation = getBaseStation(context);
-        if (baseStation != null) {
-            info.setSimMcc(baseStation.mcc);
-            info.setSimMnc(baseStation.mnc);
-            info.setSimLac(baseStation.lac);
-            info.setSimCid(baseStation.cid);
-            if (baseStation.flag) {
-
-                info.setBaseStationLongitude(baseStation.longitude);
-                info.setBaseStationLatitude(baseStation.latitude);
-            }
-
-        }
-
-        GPSInfo gps = getGPS(context);
-        if (gps != null) {
-            info.setLongitude(gps.longitude);
-            info.setLatitude(gps.latitude);
-        }
 
         info.setDeviceId(getDeviceId(context));
         info.setImsi(getIMSI(context));
         info.setSim(getSim(context));
-        info.setWifiList(getWifiList(context));
         info.setWifiDNS(getDns(context));
-        info.setWifiGateway(getWifiGateway(context));
-        info.setWifiNetmask(getWifiNetmask(context));
-        info.setWifiRssi(getConnectedWifiRssi(context));
-        info.setWifiSSID(getConnectedWifiSSID(context));
-        info.setWifiBSSID(getConnectedWifiBSSID(context));
 
-        Map<String,String> ipAddress = getIpAddress(context);
-        info.setIp(ipAddress.get("local_ip"));
-        info.setWifiIP(ipAddress.get("wifi_ip"));
+        try {
+            GPSInfo gps = getGPS(context);
+            if (gps != null) {
+                info.setLongitude(gps.longitude);
+                info.setLatitude(gps.latitude);
+            }
+
+            BaseStationInfo baseStation = getBaseStation(context);
+            if (baseStation != null) {
+                info.setSimMcc(baseStation.mcc);
+                info.setSimMnc(baseStation.mnc);
+                info.setSimLac(baseStation.lac);
+                info.setSimCid(baseStation.cid);
+                if (baseStation.flag) {
+                    info.setBaseStationLongitude(baseStation.longitude);
+                    info.setBaseStationLatitude(baseStation.latitude);
+                }
+
+            }
+
+            info.setWifiList(getWifiList(context));
+            info.setWifiGateway(getWifiGateway(context));
+            info.setWifiNetmask(getWifiNetmask(context));
+            info.setWifiRssi(getConnectedWifiRssi(context));
+            info.setWifiSSID(getConnectedWifiSSID(context));
+            info.setWifiBSSID(getConnectedWifiBSSID(context));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        Map<String, String> ipAddress = null;
+        try {
+            ipAddress = getIpAddress(context);
+            info.setIp(ipAddress.get("local_ip"));
+            info.setWifiIP(ipAddress.get("wifi_ip"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         info.setSimName(getSimName(context));
         info.setSensorList(getSensor(context));
@@ -478,31 +490,31 @@ public class DeviceUtil {
 
         //audioManager
         AudioManagerInfo audioManager = new AudioManagerInfo();
-        audioManager.streamVolume0=getStreamVolume0(am);
-        audioManager.streamVolume1=getStreamVolume1(am);
-        audioManager.streamVolume2=getStreamVolume2(am);
-        audioManager.streamVolume3=getStreamVolume3(am);
-        audioManager.streamVolume4=getStreamVolume4(am);
+        audioManager.streamVolume0 = getStreamVolume0(am);
+        audioManager.streamVolume1 = getStreamVolume1(am);
+        audioManager.streamVolume2 = getStreamVolume2(am);
+        audioManager.streamVolume3 = getStreamVolume3(am);
+        audioManager.streamVolume4 = getStreamVolume4(am);
         info.audioManager = audioManager;
 
         //connectivityManager
         ConnectivityManagerInfo connectivityManager = new ConnectivityManagerInfo();
-        connectivityManager.ExtraInfo=getConnExtraInfo(cm);
-        connectivityManager.Type=getConnType(cm);
-        connectivityManager.TypeName=getConnTypeName(cm);
-        connectivityManager.isConnected=isConnected(cm);
+        connectivityManager.ExtraInfo = getConnExtraInfo(cm);
+        connectivityManager.Type = getConnType(cm);
+        connectivityManager.TypeName = getConnTypeName(cm);
+        connectivityManager.isConnected = isConnected(cm);
         info.connectivityManager = connectivityManager;
 
         //location
-        LocationInfo location= new LocationInfo();
-        location.Latitude=getLatitude(lm, context);
-        location.Longitude=getLongitude(lm, context);
+        LocationInfo location = new LocationInfo();
+        location.Latitude = getLatitude(lm, context);
+        location.Longitude = getLongitude(lm, context);
         info.location = location;
 
         //packageManager
         PackageManagerInfo packageManager = new PackageManagerInfo();
         try {
-            packageManager.versionName=getVersionName(pm, context);
+            packageManager.versionName = getVersionName(pm, context);
             info.packageManager = packageManager;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -510,14 +522,14 @@ public class DeviceUtil {
 
         //telephonyManager
         TelephonyManagerInfo telephonyManager = new TelephonyManagerInfo();
-        telephonyManager.DeviceId=getDeviceId(context);
-        telephonyManager.Line1Number=getLine1Number(tm, context);
-        telephonyManager.NetworkOperator=getNetworkOperator(tm);
-        telephonyManager.NetworkOperatorName=getNetworkOperatorName(tm);
-        telephonyManager.NetworkType=getTelNetworkType(tm);
-        telephonyManager.SimOperatorName=getSimOperatorName(tm);
-        telephonyManager.SimSerialNumber=getSimSerialNumber(tm, context);
-        telephonyManager.SubscriberId=getSubscriberId(tm, context);
+        telephonyManager.DeviceId = getDeviceId(context);
+        telephonyManager.Line1Number = getLine1Number(tm, context);
+        telephonyManager.NetworkOperator = getNetworkOperator(tm);
+        telephonyManager.NetworkOperatorName = getNetworkOperatorName(tm);
+        telephonyManager.NetworkType = getTelNetworkType(tm);
+        telephonyManager.SimOperatorName = getSimOperatorName(tm);
+        telephonyManager.SimSerialNumber = getSimSerialNumber(tm, context);
+        telephonyManager.SubscriberId = getSubscriberId(tm, context);
         info.telephonyManager = telephonyManager;
 
 
@@ -539,6 +551,7 @@ public class DeviceUtil {
         return jsonObject;
 
     }
+
     private static String getSubscriberId(TelephonyManager tm, Context context) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             return null;
@@ -581,7 +594,7 @@ public class DeviceUtil {
     private static String getVersionName(PackageManager pm, Context context) throws PackageManager.NameNotFoundException {
         String versionName = null;
         PackageInfo info = pm.getPackageInfo(ALIPAY_PACKAGENAME, 16);
-        if(null != info){
+        if (null != info) {
             versionName = info.versionName;
         }
         return versionName;
@@ -589,21 +602,21 @@ public class DeviceUtil {
 
     private static List<String[]> getPkgInfoList(PackageManager pm) {
         List<String[]> pkgInfoList = new ArrayList<String[]>();
-        List<PackageInfo> pkgList =  pm.getInstalledPackages(64);
-        if(null != pkgList && pkgList.size() > 0){
-            for (PackageInfo info : pkgList){
+        List<PackageInfo> pkgList = pm.getInstalledPackages(64);
+        if (null != pkgList && pkgList.size() > 0) {
+            for (PackageInfo info : pkgList) {
                 Signature[] sigArray = info.signatures;
-                if(null != sigArray && sigArray.length > 0 && null != info.packageName) {
+                if (null != sigArray && sigArray.length > 0 && null != info.packageName) {
                     String[] arr = new String[sigArray.length + 1];
                     arr[0] = info.packageName;
-                    for(int i=1; i<=sigArray.length; i++){
-                        arr[i] = sigArray[i-1].toCharsString();
+                    for (int i = 1; i <= sigArray.length; i++) {
+                        arr[i] = sigArray[i - 1].toCharsString();
                     }
                     pkgInfoList.add(arr);
                 }
             }
         }
-        return  pkgInfoList;
+        return pkgInfoList;
     }
 
 
@@ -613,7 +626,7 @@ public class DeviceUtil {
             return -1;
         }
         Location loc = lm.getLastKnownLocation("network");
-        if(null != loc){
+        if (null != loc) {
             return loc.getLongitude();
         }
         return 0;
@@ -625,7 +638,7 @@ public class DeviceUtil {
             return -1;
         }
         Location loc = lm.getLastKnownLocation("network");
-        if(null != loc){
+        if (null != loc) {
             return loc.getLatitude();
         }
         return 0;
@@ -652,15 +665,19 @@ public class DeviceUtil {
     private static int getStreamVolume0(AudioManager am) {
         return am.getStreamVolume(0);
     }
+
     private static int getStreamVolume1(AudioManager am) {
         return am.getStreamVolume(1);
     }
+
     private static int getStreamVolume2(AudioManager am) {
         return am.getStreamVolume(2);
     }
+
     private static int getStreamVolume3(AudioManager am) {
         return am.getStreamVolume(3);
     }
+
     private static int getStreamVolume4(AudioManager am) {
         return am.getStreamVolume(4);
     }
@@ -935,20 +952,20 @@ public class DeviceUtil {
     }
 
 
-    private static Map<String,String> getIpAddress(Context context) {
-        Map<String,String> ipMap = new HashMap<String,String>();
+    private static Map<String, String> getIpAddress(Context context) throws Exception{
+        Map<String, String> ipMap = new HashMap<String, String>();
         ConnectivityManager conMann = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mobileNetworkInfo = conMann.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         NetworkInfo wifiNetworkInfo = conMann.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (mobileNetworkInfo.isConnected()) {
             //本地ip
-            ipMap.put("local_ip",getLocalIpAddress());
-        }else if(wifiNetworkInfo.isConnected()) {
+            ipMap.put("local_ip", getLocalIpAddress());
+        } else if (wifiNetworkInfo.isConnected()) {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             int ipAddress = wifiInfo.getIpAddress();
             //wifi_ip地址
-            ipMap.put("wifi_ip",intToIp(ipAddress));
+            ipMap.put("wifi_ip", intToIp(ipAddress));
         }
         return ipMap;
     }
@@ -980,6 +997,7 @@ public class DeviceUtil {
 
     /**
      * 获取WI-FI ip地址
+     *
      * @param ipInt
      * @return
      */
@@ -1147,19 +1165,19 @@ public class DeviceUtil {
 
 
     private static List<String> getPackagesList(Context context) {
-        List<String> appList=new ArrayList<String>();
+        List<String> appList = new ArrayList<String>();
         // 获取已经安装的所有应用, PackageInfo　系统类，包含应用信息
         List<PackageInfo> packages = context.getPackageManager().getInstalledPackages(0);
         for (int i = 0; i < packages.size(); i++) {
             PackageInfo packageInfo = packages.get(i);
-            if ((packageInfo.applicationInfo.flags& ApplicationInfo.FLAG_SYSTEM) == 0) { //非系统应用
+            if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) { //非系统应用
                 // AppInfo 自定义类，包含应用信息
                 AppInfo appInfo = new AppInfo();
                 appInfo.appName = packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();//获取应用名称
                 appInfo.packageName = packageInfo.packageName; //获取应用包名，可用于卸载和启动应用
                 appInfo.versionName = packageInfo.versionName;//获取应用版本名
                 appInfo.versionCode = packageInfo.versionCode;//获取应用版本号
-                appInfo.appIcon= packageInfo.applicationInfo.loadIcon(context.getPackageManager());//获取应用图标
+                appInfo.appIcon = packageInfo.applicationInfo.loadIcon(context.getPackageManager());//获取应用图标
                 appList.add(appInfo.appName);
             } else { // 系统应用
 
@@ -1284,13 +1302,13 @@ public class DeviceUtil {
      *
      * @return String
      */
-    private static List<OsWifiInfo> getWifiList(Context context) {
+    private static List<OsWifiInfo> getWifiList(Context context) throws Exception {
 
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         List<OsWifiInfo> list = new ArrayList<>();
         if (wifiManager.isWifiEnabled()) {
             List<ScanResult> results = noSameName(wifiManager.getScanResults());
-            if(results!=null && results.size()>0) {
+            if (results != null && results.size() > 0) {
                 for (ScanResult result : results) {
                     OsWifiInfo wifiInfo = new OsWifiInfo();
                     wifiInfo.bssid = result.BSSID.toString();
@@ -1311,33 +1329,31 @@ public class DeviceUtil {
      * @param oldSr 需要去除同名的列表
      * @return 返回不包含同命的列表
      */
-    public static List<ScanResult> noSameName(List<ScanResult> oldSr)
-    {
+    public static List<ScanResult> noSameName(List<ScanResult> oldSr) {
         List<ScanResult> newSr = new ArrayList<ScanResult>();
-        for (ScanResult result : oldSr)
-        {
+        for (ScanResult result : oldSr) {
             if (!TextUtils.isEmpty(result.SSID) && !containName(newSr, result.SSID))
                 newSr.add(result);
         }
         return newSr;
     }
+
     /**
      * 判断一个扫描结果中，是否包含了某个名称的WIFI
-     * @param sr 扫描结果
+     *
+     * @param sr   扫描结果
      * @param name 要查询的名称
      * @return 返回true表示包含了该名称的WIFI，返回false表示不包含
      */
-    public static boolean containName(List<ScanResult> sr, String name)
-    {
-        for (ScanResult result : sr)
-        {
+    public static boolean containName(List<ScanResult> sr, String name) {
+        for (ScanResult result : sr) {
             if (!TextUtils.isEmpty(result.SSID) && result.SSID.equals(name))
                 return true;
         }
         return false;
     }
 
-    private static GPSInfo getGPS(Context context) {
+    private static GPSInfo getGPS(Context context) throws Exception {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         Location location = null;
@@ -1478,54 +1494,52 @@ public class DeviceUtil {
         }
         return result;
     }
-    private static int getConnectedWifiRssi(Context context){
+
+    private static int getConnectedWifiRssi(Context context) throws Exception {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
-       if (info!=null){
-           return info.getRssi();
-       }
+        if (info != null) {
+            return info.getRssi();
+        }
 
         return 0;
 
     }
 
-    private  static String  getConnectedWifiBSSID(Context context){
+    private static String getConnectedWifiBSSID(Context context) throws Exception {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
-        if (info!=null){
+        if (info != null) {
             return info.getBSSID();
         }
-
         return null;
     }
 
-    private  static  String getConnectedWifiSSID(Context context){
+    private static String getConnectedWifiSSID(Context context) throws Exception {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
-        if (info!=null){
+        if (info != null) {
             return info.getSSID();
         }
-
         return null;
 
     }
 
 
-
-
-    private  static  String getSimName(Context context){
+    private static String getSimName(Context context) {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (telephonyManager==null){
+        if (telephonyManager == null) {
             return null;
         }
         return telephonyManager.getNetworkOperator();
     }
+
     /**
      * 获取当前的链接的基站信息
      *
      * @return
      */
-    private static BaseStationInfo getBaseStation(Context context) {
+    private static BaseStationInfo getBaseStation(Context context) throws Exception {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (telephonyManager == null) {
             return null;
@@ -1583,26 +1597,27 @@ public class DeviceUtil {
 
     /**
      * 获取DNS
+     *
      * @param context
      * @return
      */
-    private static int  getDns(Context context){
+    private static int getDns(Context context) {
         WifiManager my_wifiManager = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE));
         DhcpInfo dhcpInfo = my_wifiManager.getDhcpInfo();
-        return  dhcpInfo.dns1;
+        return dhcpInfo.dns1;
     }
 
-    private static int getWifiGateway(Context context){
+    private static int getWifiGateway(Context context) throws Exception {
         WifiManager my_wifiManager = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE));
         DhcpInfo dhcpInfo = my_wifiManager.getDhcpInfo();
-        return  dhcpInfo.gateway;
+        return dhcpInfo.gateway;
 
     }
 
-    private static int getWifiNetmask(Context context){
+    private static int getWifiNetmask(Context context) throws Exception {
         WifiManager my_wifiManager = ((WifiManager) context.getSystemService(Context.WIFI_SERVICE));
         DhcpInfo dhcpInfo = my_wifiManager.getDhcpInfo();
-        return  dhcpInfo.netmask;
+        return dhcpInfo.netmask;
 
     }
 
@@ -1611,7 +1626,7 @@ public class DeviceUtil {
      *
      * @return
      */
-    private static List<NeighboringStationInfo> getBaseStationList(Context context) {
+    private static List<NeighboringStationInfo> getBaseStationList(Context context) throws Exception {
 
         List<NeighboringStationInfo> list = new ArrayList<>();
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -1629,12 +1644,12 @@ public class DeviceUtil {
             return null;
         }
         List<NeighboringCellInfo> infos = telephonyManager.getNeighboringCellInfo();
-        if(infos != null &&infos.size() > 0){
+        if (infos != null && infos.size() > 0) {
             for (NeighboringCellInfo info : infos) { // 根据邻区总数进行循环
                 NeighboringStationInfo stationInfo = new NeighboringStationInfo();
-                stationInfo.cid =   info.getCid()+"";
-                stationInfo.lac =   info.getLac()+"";
-                stationInfo.rssi =   info.getRssi()+"";//强度
+                stationInfo.cid = info.getCid() + "";
+                stationInfo.lac = info.getLac() + "";
+                stationInfo.rssi = info.getRssi() + "";//强度
                 list.add(stationInfo);
             }
         }
@@ -1653,7 +1668,6 @@ public class DeviceUtil {
         long availCount = stat.getAvailableBlocks();
         return Formatter.formatFileSize(context, blockSize * availCount);
     }
-
 
 
     /**
@@ -1737,8 +1751,8 @@ public class DeviceUtil {
         return (totalRam - freeRam) + "MB";
     }
 
-    private static String getDataPath(){
-        return  Environment.getDataDirectory().getPath();
+    private static String getDataPath() {
+        return Environment.getDataDirectory().getPath();
     }
 
 }
